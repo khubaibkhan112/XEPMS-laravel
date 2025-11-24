@@ -1,0 +1,76 @@
+Day,Module,Task,Description,Estimated Hours,Priority,Dependencies,Deliverables,Status,Notes
+1,Database Design,Reservation Tables,Create reservations booking_details room_availability tables with proper indexes,8,Critical,None,Database schema with migrations,Completed,Foundation for entire system; ensure compatibility with UK-based OTA APIs (Booking.com, etc.)
+2,Database Design,Channel Manager Tables,Create channel_connections ota_mappings rate_inventory_sync tables,8,Critical,Day 1,Channel manager DB structure,Completed,Schema supports UK OTA APIs (Booking.com, etc.) with regional, locale, and encrypted credential metadata
+3,Database Design,Sync Log Tables,Create sync_logs error_logs audit_trail tables for tracking,6,High,Day 2,Logging and audit structure,Completed,Logs capture OTA request/response metadata for UK-based APIs
+4,Core Models,Reservation Models,Create Reservation RoomAvailability BookingDetail models with relationships,8,Critical,Day 1,Eloquent models with relations,Completed,Models enriched for UK OTA data (GBP defaults, locale, channel scopes)
+5,Core Models,Channel Manager Models,Create ChannelConnection OTAMapping RateSync models,8,Critical,Day 2,Channel manager models,Completed,Models include UK OTA support incl. Tripadvisor Viator Hotels.com LateRooms Travel Republic
+6,API Integration,Booking.com API Setup,Research Booking.com API setup credentials test connection,8,Critical,Day 5,Working Booking.com connection,Completed,Client scaffold with UK endpoints config + connection factory
+7,API Integration,Expedia API Setup,Research Expedia API setup credentials test connection,6,High,Day 6,Working Expedia connection,Completed,Client scaffold w/ env key placeholders & factory integration
+8,API Integration,Airbnb API Setup,Research Airbnb API setup credentials test connection,6,Medium,Day 7,Working Airbnb connection,Completed,Client scaffold w/ env placeholders integrated into factory
+9,Calendar UI,Calendar Grid Layout,Create monthly calendar grid view like screenshot with rooms and dates,8,Critical,Day 4,Calendar HTML/CSS structure,Completed,Vue calendar grid scaffold with sample data and Tailwind styling
+10,Calendar UI,Date Navigation,Add Today Month Week Day view switching and date range navigation,6,High,Day 9,Working navigation controls,Completed,Daily/weekly/monthly modes with Today/Prev/Next controls
+11,Calendar UI,Room Rows Display,Display room list vertically with room numbers/names,4,High,Day 9,Room list rendering,Completed,Vue sidebar lists rooms with types/capacity
+12,Calendar UI,Reservation Blocks,Create orange booking blocks that span multiple days with guest names,8,Critical,Day 9,Visual booking blocks,Completed,Color-coded status blocks w/ drag affordance
+13,Calendar UI,Drag and Drop,Implement drag-drop to move/resize bookings on calendar,10,High,Day 12,Interactive booking management,Completed,Pointer-based drag updates adjust stay dates
+14,Calendar UI,Booking Tooltips,Add hover tooltips showing full booking details,4,Medium,Day 12,Information popups,Completed,Hover tooltips show guest details, dates, room, pricing, and source
+15,Reservation CRUD,Create Booking,Build form to create new reservation with guest details dates room,8,Critical,Day 4,Booking creation form,Completed,Modal form with guest details, dates, room selection, pricing, and source
+16,Reservation CRUD,Edit Booking,Allow editing existing reservations with validation,6,High,Day 15,Booking edit functionality,Completed,Double-click reservation to edit; modal form with validation
+17,Reservation CRUD,Cancel Booking,Implement cancellation with refund rules and policies,6,High,Day 16,Cancellation workflow,Completed,Cancellation modal with refund calculation based on timing (full/partial/no refund), cancellation reasons, and email notification option
+18,Reservation CRUD,Booking Search,Advanced search by guest name dates room status,6,High,Day 15,Search functionality,Completed,Search modal with filters for guest name, dates, room, status, and source; results list with click-to-edit
+19,Availability Engine,Check Availability,Real-time room availability check for date ranges,10,Critical,Day 4,Availability logic,Completed,API endpoints for availability checking with conflict detection, prevents overbooking, checks reservations and restrictions
+20,Availability Engine,Block Dates,Allow manual blocking of rooms for maintenance,4,Medium,Day 19,Date blocking feature,Completed,Block dates modal with API integration, blocks rooms for maintenance with reason tracking
+21,Availability Engine,Availability Calendar API,Expose API endpoint for availability queries,6,High,Day 19,REST API endpoint,Completed,API endpoints /api/availability/check, /api/availability/calendar, /api/availability/block, /api/availability/unblock implemented
+22,Booking Import,Parse Booking.com Reservations,Import bookings from Booking.com API automatically,10,Critical,Day 6,Booking import from Booking.com,Not Started,Auto-sync bookings
+23,Booking Import,Parse Expedia Reservations,Import bookings from Expedia API automatically,8,High,Day 22,Booking import from Expedia,Not Started,Multi-channel sync
+24,Booking Import,Parse Airbnb Reservations,Import bookings from Airbnb API automatically,8,Medium,Day 23,Booking import from Airbnb,Not Started,Additional channel
+25,Booking Import,Duplicate Detection,Prevent duplicate bookings from multiple channels,8,Critical,Day 24,Duplicate prevention logic,Not Started,Critical for data integrity
+26,Booking Import,Auto-Import Scheduler,Create cron job to auto-import bookings every 15 minutes,6,High,Day 25,Scheduled import job,Not Started,Automated syncing
+27,Rate & Inventory Sync,Push Rates to OTAs,Sync room rates to Booking.com Expedia when changed,10,Critical,Day 21,Rate push functionality,Not Started,Update OTA pricing
+28,Rate & Inventory Sync,Push Inventory to OTAs,Sync room availability to all connected OTAs,10,Critical,Day 27,Inventory push functionality,Not Started,Update OTA availability
+29,Rate & Inventory Sync,Bulk Rate Update,Update rates for multiple rooms/dates at once,6,High,Day 27,Bulk update feature,Not Started,Efficiency tool
+30,Rate & Inventory Sync,Restriction Management,Handle min stay max stay closed to arrival/departure,8,High,Day 28,Restriction rules engine,Not Started,Advanced inventory control
+31,Conflict Resolution,Overbooking Detection,Detect and alert on overbooking scenarios,8,Critical,Day 25,Overbooking alerts,Not Started,Prevent double bookings
+32,Conflict Resolution,Manual Conflict Resolution,Interface to manually resolve booking conflicts,6,High,Day 31,Conflict resolution UI,Not Started,Handle edge cases
+33,Conflict Resolution,Auto-Close on Book,Automatically close inventory on OTAs when booked locally,8,Critical,Day 28,Auto-inventory closure,Not Started,Real-time sync
+34,Channel Manager UI,OTA Connection Manager,UI to add/edit/test OTA connections and credentials,8,High,Day 5,OTA management interface,Not Started,Configure connections
+35,Channel Manager UI,Sync Dashboard,Dashboard showing sync status errors last sync time,8,High,Day 26,Monitoring dashboard,Not Started,Track sync health
+36,Channel Manager UI,Sync Logs Viewer,View detailed logs of all sync activities and errors,6,Medium,Day 35,Log viewing interface,Not Started,Debugging tool
+37,Channel Manager UI,Rate Calendar View,Calendar view to manage rates across all channels,8,High,Day 29,Rate management UI,Not Started,Visual rate management
+38,Notifications,Booking Email,Send confirmation email on new booking,6,High,Day 15,Email notification system,Not Started,Guest communication
+39,Notifications,Sync Error Alerts,Email/SMS alerts on sync failures,6,High,Day 35,Alert notification system,Not Started,Critical error handling
+40,Notifications,Overbooking Alerts,Instant alerts when overbooking detected,6,Critical,Day 31,Overbooking notification,Not Started,Immediate action needed
+41,Frontend Integration,Guest Search Widget,Public-facing search widget for availability,8,High,Day 19,Booking widget,Not Started,Customer-facing feature
+42,Frontend Integration,Booking Form,Multi-step booking form with guest details payment,10,High,Day 41,Complete booking flow,Not Started,Customer booking process
+43,Frontend Integration,Booking Confirmation,Confirmation page with booking details and voucher,6,High,Day 42,Confirmation display,Not Started,Post-booking experience
+44,Reporting,Occupancy Report,Report showing occupancy rates by date range,6,Medium,Day 4,Occupancy analytics,Not Started,Business intelligence
+45,Reporting,Revenue Report,Revenue breakdown by channel room type dates,6,Medium,Day 44,Revenue analytics,Not Started,Financial tracking
+46,Reporting,Channel Performance,Compare performance across different OTAs,6,Medium,Day 45,Channel comparison report,Not Started,Optimize distribution
+47,API Development,Reservation API,REST API for reservation CRUD operations,8,High,Day 4,Reservation API endpoints,Not Started,External integrations
+48,API Development,Availability API,REST API to check and update availability,8,High,Day 19,Availability API endpoints,Not Started,Channel manager API
+49,API Development,Rate API,REST API to get and update rates,6,High,Day 27,Rate API endpoints,Not Started,Price management API
+50,API Development,Webhook Handlers,Handle webhooks from OTAs for real-time updates,10,Critical,Day 26,Webhook processing,Not Started,Real-time sync
+51,Testing,Unit Tests - Reservations,Write unit tests for reservation logic,8,High,Day 4,Test coverage > 80%,Not Started,Quality assurance
+52,Testing,Unit Tests - Channel Manager,Write unit tests for channel manager logic,8,High,Day 5,Test coverage > 80%,Not Started,Quality assurance
+53,Testing,Integration Tests - Booking.com,Test full flow with Booking.com API,6,Critical,Day 22,Working integration,Not Started,End-to-end testing
+54,Testing,Integration Tests - Expedia,Test full flow with Expedia API,6,High,Day 23,Working integration,Not Started,End-to-end testing
+55,Testing,Load Testing,Test system under high booking volume,6,Medium,Day 50,Performance benchmarks,Not Started,Scalability check
+56,Security,API Authentication,Implement OAuth/API key authentication for channel APIs,6,Critical,Day 5,Secure API access,Not Started,Security essential
+57,Security,Data Encryption,Encrypt sensitive OTA credentials and guest data,6,Critical,Day 56,Encrypted storage,Not Started,Compliance requirement
+58,Security,Rate Limiting,Implement rate limiting for API calls to OTAs,4,High,Day 56,Rate limiting middleware,Not Started,Prevent API throttling
+59,Optimization,Database Indexing,Add proper indexes for fast queries on large datasets,4,High,Day 1,Optimized queries,Not Started,Performance critical
+60,Optimization,Caching Layer,Implement Redis caching for availability queries,6,High,Day 19,Cache system,Not Started,Reduce DB load
+61,Optimization,Query Optimization,Optimize N+1 queries and slow database operations,6,High,Day 60,Fast query performance,Not Started,Speed improvement
+62,Documentation,API Documentation,Create Swagger/OpenAPI docs for all API endpoints,8,Medium,Day 50,API documentation,Not Started,Developer reference
+63,Documentation,User Guide,Write user manual for reservation and channel manager,8,Medium,Day 36,User documentation,Not Started,Training material
+64,Documentation,Setup Guide,Document OTA setup process with screenshots,6,Medium,Day 7,Setup documentation,Not Started,Onboarding guide
+65,Deployment,Production Setup,Setup production environment with SSL monitoring,8,High,All modules,Live production server,Not Started,Go-live preparation
+66,Deployment,Backup Strategy,Implement automated database backups,4,High,Day 65,Backup system,Not Started,Data protection
+67,Deployment,Monitoring,Setup error monitoring and performance tracking,6,High,Day 65,Monitoring dashboard,Not Started,System health
+68,Training,Staff Training,Train staff on using reservation system and calendar,4,High,Day 36,Trained team,Not Started,User adoption
+69,Training,Admin Training,Train admins on channel manager configuration,4,High,Day 36,Trained admins,Not Started,System management
+70,Launch,Soft Launch,Launch with limited properties for testing,8,Critical,Day 65,Beta version live,Not Started,Real-world testing
+71,Launch,Full Launch,Launch to all properties after successful testing,4,Critical,Day 70,Production launch,Not Started,Go live!
+72,Post-Launch,Bug Fixes,Fix issues reported during soft launch,Variable,Critical,Day 70,Stable system,Not Started,Ongoing support
+73,Post-Launch,Performance Tuning,Optimize based on production metrics,Variable,High,Day 71,Optimized performance,Not Started,Continuous improvement
+74,Post-Launch,Feature Requests,Implement user-requested enhancements,Variable,Medium,Day 71,New features,Not Started,Product evolution
+
