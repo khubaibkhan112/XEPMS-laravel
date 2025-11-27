@@ -102,14 +102,89 @@ const form = ref({
 const loading = ref(false);
 const error = ref('');
 
-function handleLogin() {
+async function handleLogin() {
     error.value = '';
     loading.value = true;
 
-    setTimeout(() => {
+    try {
+        // Get CSRF token with error checking
+        const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
+        if (!csrfTokenElement) {
+            throw new Error('CSRF token meta tag not found. Please ensure the login page includes the CSRF token meta tag.');
+        }
+
+        const csrfToken = csrfTokenElement.content;
+        if (!csrfToken) {
+            throw new Error('CSRF token is empty. Please refresh the page and try again.');
+        }
+
+        const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+            },
+            body: JSON.stringify({
+                email: form.value.email,
+                password: form.value.password,
+                remember: form.value.remember,
+            }),
+        });
+
+        if (!response.ok) {
+            // Handle HTTP errors
+            let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+            try {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+                if (errorData.errors) {
+                    const errorMessages = Object.values(errorData.errors).flat();
+                    errorMessage = errorMessages.join(', ') || errorMessage;
+                }
+            } catch (e) {
+                // If response is not JSON, use status text
+                errorMessage = `Server error: ${response.status} ${response.statusText}`;
+            }
+            throw new Error(errorMessage);
+        }
+
+        const result = await response.json();
+
+        if (result.success) {
+            // Login successful, redirect to dashboard
+            window.location.href = '/admin/dashboard';
+        } else {
+            // Show error message from server
+            error.value = result.message || 'Login failed. Please check your credentials.';
+            if (result.errors) {
+                const errorMessages = Object.values(result.errors).flat();
+                if (errorMessages.length > 0) {
+                    error.value = errorMessages.join(', ');
+                }
+            }
+            loading.value = false;
+        }
+    } catch (err) {
+        // Enhanced error logging with line numbers and details
+        const errorDetails = {
+            message: err.message,
+            stack: err.stack,
+            name: err.name,
+            line: err.line || 'Unknown',
+            file: err.fileName || 'Login.vue',
+        };
+        
+        console.error('Login error at Login.vue:', errorDetails);
+        console.error('Error details:', {
+            message: err.message,
+            stack: err.stack,
+            type: typeof err,
+            constructor: err.constructor?.name,
+        });
+        
+        error.value = err.message || 'An error occurred. Please try again.';
         loading.value = false;
-        window.location.href = '/admin/calendar';
-    }, 1000);
+    }
 }
 </script>
 

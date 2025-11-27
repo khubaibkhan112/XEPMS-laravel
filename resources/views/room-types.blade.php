@@ -4,13 +4,12 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        <title>XEPMS | Dashboard</title>
+        <title>Channel Manager | Room Type Management</title>
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="antialiased">
-        <div id="dashboard-app"></div>
+        <div id="room-types-app"></div>
     </body>
 </html>
-
 
 

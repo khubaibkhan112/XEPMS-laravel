@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('reservations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('property_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('room_type_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('room_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('channel_connection_id')->nullable()->constrained()->nullOnDelete();
+            // $table->foreignId('property_id')->constrained()->cascadeOnDelete();
+            // $table->foreignId('room_type_id')->nullable()->constrained()->nullOnDelete();
+            // $table->foreignId('room_id')->nullable()->constrained()->nullOnDelete();
+            // $table->foreignId('channel_connection_id')->nullable()->constrained()->nullOnDelete();
             $table->string('channel_reference')->nullable();
             $table->string('ota_reservation_code')->nullable()->index();
             $table->string('external_id')->nullable();
@@ -29,7 +29,11 @@ return new class extends Migration
             $table->string('guest_postal_code', 20)->nullable();
             $table->date('check_in');
             $table->date('check_out');
-            $table->unsignedSmallInteger('nights');
+            $table->unsignedSmallInteger('property_id');
+            $table->unsignedSmallInteger('room_type_id');
+            $table->unsignedSmallInteger('room_id');
+            $table->unsignedSmallInteger('channel_connection_id');
+            $table->unsignedBigInteger('nights');
             $table->unsignedSmallInteger('adult_count')->default(1);
             $table->unsignedSmallInteger('child_count')->default(0);
             $table->decimal('total_amount', 12, 2)->default(0);

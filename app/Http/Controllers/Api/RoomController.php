@@ -36,7 +36,7 @@ class RoomController extends Controller
         $property = Property::find($request->property_id);
 
         // Ensure user owns the property
-        if ($property->user_id !== Auth::id()) {
+        if ($property->user_id !== Auth::guard('web')->id()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized. You do not have access to this property.',
@@ -86,7 +86,7 @@ class RoomController extends Controller
         $property = Property::find($request->property_id);
 
         // Ensure user owns the property
-        if ($property->user_id !== Auth::id()) {
+        if ($property->user_id !== Auth::guard('web')->id()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized. You do not have access to this property.',
@@ -158,7 +158,7 @@ class RoomController extends Controller
         }
 
         // Ensure user owns the property that owns this room
-        if ($room->property->user_id !== Auth::id()) {
+        if ($room->property->user_id !== Auth::guard('web')->id()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized. You do not have access to this room.',
@@ -190,7 +190,7 @@ class RoomController extends Controller
         }
 
         // Ensure user owns the property that owns this room
-        if ($room->property->user_id !== Auth::id()) {
+        if ($room->property->user_id !== Auth::guard('web')->id()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized. You do not have access to this room.',
@@ -280,7 +280,7 @@ class RoomController extends Controller
         }
 
         // Ensure user owns the property that owns this room
-        if ($room->property->user_id !== Auth::id()) {
+        if ($room->property->user_id !== Auth::guard('web')->id()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized. You do not have access to this room.',

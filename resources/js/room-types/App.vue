@@ -7,12 +7,12 @@
                 <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-6 py-4">
                     <div class="space-y-1">
                         <h1 class="text-xl font-semibold text-slate-900">
-                            Room Management
+                            Room Type Management
                             <span v-if="selectedProperty" class="ml-2 text-base font-normal text-slate-500">
                                 - {{ selectedProperty.name }}
                             </span>
                         </h1>
-                        <p class="text-sm text-slate-500">Manage rooms, room types, and properties for your accommodation.</p>
+                        <p class="text-sm text-slate-500">Manage room types and their configurations for your property.</p>
                     </div>
                     <div class="flex flex-wrap items-center gap-2">
                         <button
@@ -21,12 +21,12 @@
                             type="button"
                             @click="showCreateModal = true"
                         >
-                            + Add Room
+                            + Add Room Type
                         </button>
                         <button
                             class="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 focus:visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
                             type="button"
-                            @click="loadRooms"
+                            @click="loadRoomTypes"
                         >
                             <svg class="mr-1.5 inline h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke-linecap="round" stroke-linejoin="round" />
@@ -53,84 +53,87 @@
                         <path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
                     <h3 class="mt-4 text-lg font-medium text-slate-900">No Property Selected</h3>
-                    <p class="mt-2 text-sm text-slate-500">Please select a property from the sidebar to view and manage its rooms.</p>
+                    <p class="mt-2 text-sm text-slate-500">Please select a property from the sidebar to view and manage its room types.</p>
                     <p class="mt-1 text-xs text-slate-400">Click the edit icon next to "Property" in the sidebar to select a property.</p>
                 </div>
 
                 <div v-else class="space-y-6">
-                    <!-- Rooms List -->
+                    <!-- Room Types List -->
                     <div class="rounded-lg bg-white shadow-sm">
                         <div class="border-b border-slate-200 px-6 py-4">
                             <h2 class="text-lg font-semibold text-slate-900">
-                                Rooms ({{ rooms.length }})
+                                Room Types ({{ roomTypes.length }})
                             </h2>
                         </div>
-                        <div v-if="rooms.length === 0" class="p-12 text-center">
+                        <div v-if="roomTypes.length === 0" class="p-12 text-center">
                             <svg class="mx-auto h-12 w-12 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" stroke-linecap="round" stroke-linejoin="round" />
                             </svg>
-                            <h3 class="mt-4 text-lg font-medium text-slate-900">No rooms found</h3>
-                            <p class="mt-2 text-sm text-slate-500">Get started by creating a new room.</p>
+                            <h3 class="mt-4 text-lg font-medium text-slate-900">No room types found</h3>
+                            <p class="mt-2 text-sm text-slate-500">Get started by creating a new room type.</p>
                             <button
                                 class="mt-4 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-blue-700"
                                 type="button"
                                 @click="showCreateModal = true"
                             >
-                                + Add Room
+                                + Add Room Type
                             </button>
                         </div>
                         <div v-else class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-slate-200">
                                 <thead class="bg-slate-50">
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">Room Number</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">Name</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">Room Type</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">Code</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">Occupancy</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">Base Rate</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">Rooms</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">Status</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">Floor</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">Max Occupancy</th>
                                         <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-slate-500">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-200 bg-white">
-                                    <tr v-for="room in rooms" :key="room.id" class="hover:bg-slate-50">
+                                    <tr v-for="roomType in roomTypes" :key="roomType.id" class="hover:bg-slate-50">
                                         <td class="whitespace-nowrap px-6 py-4 text-sm font-medium text-slate-900">
-                                            {{ room.room_number || '-' }}
-                                        </td>
-                                        <td class="whitespace-nowrap px-6 py-4 text-sm text-slate-900">
-                                            {{ room.name }}
+                                            {{ roomType.name }}
                                         </td>
                                         <td class="whitespace-nowrap px-6 py-4 text-sm text-slate-500">
-                                            {{ room.room_type?.name || '-' }}
+                                            {{ roomType.code || '-' }}
+                                        </td>
+                                        <td class="whitespace-nowrap px-6 py-4 text-sm text-slate-500">
+                                            {{ roomType.base_occupancy || 0 }} - {{ roomType.max_occupancy || 0 }} guests
+                                        </td>
+                                        <td class="whitespace-nowrap px-6 py-4 text-sm text-slate-500">
+                                            <span v-if="roomType.base_rate">
+                                                {{ roomType.currency || 'GBP' }} {{ parseFloat(roomType.base_rate).toFixed(2) }}
+                                            </span>
+                                            <span v-else>-</span>
+                                        </td>
+                                        <td class="whitespace-nowrap px-6 py-4 text-sm text-slate-500">
+                                            {{ roomType.rooms_count || 0 }} rooms
                                         </td>
                                         <td class="whitespace-nowrap px-6 py-4">
                                             <span
                                                 :class="[
                                                     'inline-flex rounded-full px-2 py-1 text-xs font-semibold',
-                                                    getStatusClass(room.status),
+                                                    roomType.is_active ? 'bg-green-100 text-green-800' : 'bg-slate-100 text-slate-800',
                                                 ]"
                                             >
-                                                {{ room.status }}
+                                                {{ roomType.is_active ? 'Active' : 'Inactive' }}
                                             </span>
-                                        </td>
-                                        <td class="whitespace-nowrap px-6 py-4 text-sm text-slate-500">
-                                            {{ room.floor || '-' }}
-                                        </td>
-                                        <td class="whitespace-nowrap px-6 py-4 text-sm text-slate-500">
-                                            {{ room.max_occupancy || '-' }}
                                         </td>
                                         <td class="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
                                             <button
                                                 class="mr-2 text-blue-600 hover:text-blue-900"
                                                 type="button"
-                                                @click="handleEdit(room)"
+                                                @click="handleEdit(roomType)"
                                             >
                                                 Edit
                                             </button>
                                             <button
                                                 class="text-red-600 hover:text-red-900"
                                                 type="button"
-                                                @click="handleDelete(room)"
+                                                @click="handleDelete(roomType)"
                                             >
                                                 Delete
                                             </button>
@@ -144,14 +147,13 @@
             </main>
         </div>
 
-        <!-- Create/Edit Room Modal -->
-        <RoomFormModal
+        <!-- Create/Edit Room Type Modal -->
+        <RoomTypeFormModal
             :property-id="selectedPropertyId"
-            :room="selectedRoom"
-            :room-types="roomTypes"
+            :room-type="selectedRoomType"
             :show="showCreateModal || showEditModal"
             @close="handleCloseModal"
-            @submit="handleSubmitRoom"
+            @submit="handleSubmitRoomType"
         />
     </div>
 </template>
@@ -160,64 +162,55 @@
 import { onMounted, ref, watch } from 'vue';
 import SidebarNavigation from '../shared/components/SidebarNavigation.vue';
 import TopNavbar from '../shared/components/TopNavbar.vue';
-import RoomFormModal from './components/RoomFormModal.vue';
 import { usePropertySelection } from '../shared/composables/usePropertySelection';
+import RoomTypeFormModal from './components/RoomTypeFormModal.vue';
 
 const { selectedPropertyId, selectedProperty, loadPropertyDetails } = usePropertySelection();
-const rooms = ref([]);
 const roomTypes = ref([]);
-const selectedRoom = ref(null);
+const selectedRoomType = ref(null);
 const showCreateModal = ref(false);
 const showEditModal = ref(false);
 const loading = ref(false);
 
-function getStatusClass(status) {
-    const classes = {
-        available: 'bg-green-100 text-green-800',
-        occupied: 'bg-blue-100 text-blue-800',
-        maintenance: 'bg-yellow-100 text-yellow-800',
-        out_of_order: 'bg-red-100 text-red-800',
-    };
-    return classes[status] || 'bg-slate-100 text-slate-800';
+// Listen for property change events from sidebar
+function handlePropertyChanged(event) {
+    if (event.detail) {
+        loadRoomTypes();
+    }
 }
 
-async function loadRooms() {
+async function loadRoomTypes() {
     if (!selectedPropertyId.value) return;
 
     try {
         loading.value = true;
-        const response = await fetch(`/api/rooms?property_id=${selectedPropertyId.value}`);
+        const response = await fetch(`/api/room-types?property_id=${selectedPropertyId.value}`);
         const result = await response.json();
         if (result.success) {
-            rooms.value = result.data;
-        }
-
-        // Load room types for the property
-        const roomTypesResponse = await fetch(`/api/room-types?property_id=${selectedPropertyId.value}`);
-        const roomTypesResult = await roomTypesResponse.json();
-        if (roomTypesResult.success) {
-            roomTypes.value = roomTypesResult.data;
+            roomTypes.value = result.data;
+        } else {
+            console.error('Failed to load room types:', result.message);
         }
     } catch (error) {
-        console.error('Error loading rooms:', error);
-        alert('Failed to load rooms. Please try again.');
+        console.error('Error loading room types:', error);
+        alert('Failed to load room types. Please try again.');
     } finally {
         loading.value = false;
     }
 }
 
-function handleEdit(room) {
-    selectedRoom.value = room;
+function handleEdit(roomType) {
+    selectedRoomType.value = roomType;
     showEditModal.value = true;
 }
 
-async function handleDelete(room) {
-    if (!confirm(`Are you sure you want to delete room "${room.name}"? This action cannot be undone.`)) {
+async function handleDelete(roomType) {
+    if (!confirm(`Are you sure you want to delete room type "${roomType.name}"? This action cannot be undone.`)) {
         return;
     }
 
     try {
-        const response = await fetch(`/api/rooms/${room.id}`, {
+        const response = await fetch(`/api/room-types/${roomType.id}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -227,27 +220,27 @@ async function handleDelete(room) {
 
         const result = await response.json();
         if (result.success) {
-            alert('Room deleted successfully');
-            await loadRooms();
+            alert('Room type deleted successfully');
+            await loadRoomTypes();
         } else {
-            alert(result.message || 'Failed to delete room');
+            alert(result.message || 'Failed to delete room type');
         }
     } catch (error) {
-        console.error('Error deleting room:', error);
-        alert('Failed to delete room. Please try again.');
+        console.error('Error deleting room type:', error);
+        alert('Failed to delete room type. Please try again.');
     }
 }
 
 function handleCloseModal() {
     showCreateModal.value = false;
     showEditModal.value = false;
-    selectedRoom.value = null;
+    selectedRoomType.value = null;
 }
 
-async function handleSubmitRoom(roomData) {
+async function handleSubmitRoomType(roomTypeData) {
     try {
-        const url = selectedRoom.value ? `/api/rooms/${selectedRoom.value.id}` : '/api/rooms';
-        const method = selectedRoom.value ? 'PUT' : 'POST';
+        const url = selectedRoomType.value ? `/api/room-types/${selectedRoomType.value.id}` : '/api/room-types';
+        const method = selectedRoomType.value ? 'PUT' : 'POST';
 
         const response = await fetch(url, {
             method,
@@ -255,39 +248,35 @@ async function handleSubmitRoom(roomData) {
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
             },
-            body: JSON.stringify(roomData),
+            body: JSON.stringify(roomTypeData),
         });
 
         const result = await response.json();
         if (result.success) {
-            alert(selectedRoom.value ? 'Room updated successfully' : 'Room created successfully');
+            alert(selectedRoomType.value ? 'Room type updated successfully' : 'Room type created successfully');
             handleCloseModal();
-            await loadRooms();
+            await loadRoomTypes();
         } else {
-            alert(result.message || 'Failed to save room');
+            alert(result.message || 'Failed to save room type');
+            if (result.errors) {
+                console.error('Validation errors:', result.errors);
+            }
         }
     } catch (error) {
-        console.error('Error saving room:', error);
-        alert('Failed to save room. Please try again.');
-    }
-}
-
-// Listen for property change events from sidebar
-function handlePropertyChanged(event) {
-    if (event.detail) {
-        loadRooms();
+        console.error('Error saving room type:', error);
+        alert('Failed to save room type. Please try again.');
     }
 }
 
 onMounted(async () => {
     // Load property details if we have a selected property ID
     await loadPropertyDetails();
-    
-    // If we have a selected property, load rooms
+
+    // If we have a selected property, load room types
     if (selectedPropertyId.value) {
-        await loadRooms();
+        await loadRoomTypes();
     }
-    
+
     // Listen for property changes
     window.addEventListener('property-changed', handlePropertyChanged);
 });
@@ -296,11 +285,11 @@ onMounted(async () => {
 watch(selectedPropertyId, async (newId) => {
     if (newId) {
         await loadPropertyDetails();
-        await loadRooms();
+        await loadRoomTypes();
     } else {
-        rooms.value = [];
         roomTypes.value = [];
     }
 });
 </script>
+
 
