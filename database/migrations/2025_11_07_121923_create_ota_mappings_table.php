@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('ota_mappings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('channel_connection_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('room_type_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('room_id')->nullable()->constrained()->nullOnDelete();
+            $table->unsignedBigInteger('channel_connection_id');
+            $table->unsignedBigInteger('room_type_id')->nullable();
+            $table->unsignedBigInteger('room_id')->nullable();
             $table->string('channel_identifier')->nullable();
             $table->string('ota_room_id')->nullable();
             $table->string('ota_rate_plan_id')->nullable();
@@ -37,6 +37,10 @@ return new class extends Migration
 
             $table->unique(['channel_connection_id', 'ota_room_id', 'ota_rate_plan_id'], 'ota_mapping_unique');
             $table->index(['channel_identifier', 'is_active']);
+
+            $table->foreign('channel_connection_id')->references('id')->on('channel_connections')->cascadeOnDelete();
+            $table->foreign('room_type_id')->references('id')->on('room_types')->nullOnDelete();
+            $table->foreign('room_id')->references('id')->on('rooms')->nullOnDelete();
         });
     }
 

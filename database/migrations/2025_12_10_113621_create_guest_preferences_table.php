@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('guest_preferences', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('guest_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('property_id')->nullable()->constrained()->nullOnDelete(); // Null = global preference
+            $table->unsignedBigInteger('guest_id');
+            $table->unsignedBigInteger('property_id')->nullable(); // Null = global preference
             $table->string('preference_type'); // room_preference, amenity, dietary, special_request, etc.
             $table->string('preference_key'); // e.g., 'floor_level', 'room_view', 'bed_type', 'dietary_restrictions'
             $table->string('preference_value')->nullable(); // e.g., 'high_floor', 'sea_view', 'king_bed', 'vegetarian'
@@ -25,6 +25,9 @@ return new class extends Migration
 
             $table->index(['guest_id', 'property_id']);
             $table->index(['preference_type', 'preference_key']);
+
+            $table->foreign('guest_id')->references('id')->on('guests')->cascadeOnDelete();
+            $table->foreign('property_id')->references('id')->on('properties')->nullOnDelete();
         });
     }
 

@@ -13,17 +13,17 @@ return new class extends Migration
     {
         Schema::create('room_keys', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('property_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('room_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('reservation_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('check_in_id')->nullable()->constrained()->nullOnDelete();
+            $table->unsignedBigInteger('property_id');
+            $table->unsignedBigInteger('room_id')->nullable();
+            $table->unsignedBigInteger('reservation_id')->nullable();
+            $table->unsignedBigInteger('check_in_id')->nullable();
             $table->string('key_type')->default('physical'); // physical, electronic, card, code
             $table->string('key_identifier')->nullable(); // Key number, card number, code
             $table->string('key_code')->nullable(); // For electronic keys/codes
             $table->timestamp('issued_at')->nullable();
             $table->timestamp('returned_at')->nullable();
-            $table->foreignId('issued_by')->nullable()->constrained('users')->nullOnDelete();
-            $table->foreignId('returned_to')->nullable()->constrained('users')->nullOnDelete();
+            $table->unsignedBigInteger('issued_by')->nullable();
+            $table->unsignedBigInteger('returned_to')->nullable();
             $table->string('status')->default('available'); // available, issued, lost, damaged, returned
             $table->text('notes')->nullable();
             $table->json('metadata')->nullable(); // Additional key information
@@ -33,6 +33,13 @@ return new class extends Migration
             $table->index(['reservation_id']);
             $table->index(['check_in_id']);
             $table->index(['status']);
+
+            $table->foreign('property_id')->references('id')->on('properties')->cascadeOnDelete();
+            $table->foreign('room_id')->references('id')->on('rooms')->nullOnDelete();
+            $table->foreign('reservation_id')->references('id')->on('reservations')->nullOnDelete();
+            $table->foreign('check_in_id')->references('id')->on('check_ins')->nullOnDelete();
+            $table->foreign('issued_by')->references('id')->on('users')->nullOnDelete();
+            $table->foreign('returned_to')->references('id')->on('users')->nullOnDelete();
         });
     }
 

@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('reservation_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('property_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('invoice_id')->nullable()->constrained()->nullOnDelete();
+            $table->unsignedBigInteger('reservation_id');
+            $table->unsignedBigInteger('property_id');
+            $table->unsignedBigInteger('invoice_id')->nullable();
             $table->string('payment_method', 50)->default('stripe'); // stripe, paypal, bank_transfer, cash
             $table->string('payment_type', 50)->default('full'); // full, partial, deposit, refund
             $table->decimal('amount', 12, 2);
@@ -40,6 +40,9 @@ return new class extends Migration
             $table->index(['property_id', 'status']);
             $table->index(['gateway_transaction_id']);
             $table->index(['status', 'created_at']);
+
+            $table->foreign('reservation_id')->references('id')->on('reservations')->cascadeOnDelete();
+            $table->foreign('property_id')->references('id')->on('properties')->cascadeOnDelete();
         });
     }
 

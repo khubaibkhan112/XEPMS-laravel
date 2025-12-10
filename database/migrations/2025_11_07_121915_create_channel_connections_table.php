@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('channel_connections', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('property_id')->constrained()->cascadeOnDelete();
+            $table->unsignedBigInteger('property_id');
             $table->string('name');
             $table->string('channel', 50);
             $table->string('connection_type', 20)->default('two_way');
@@ -32,6 +32,8 @@ return new class extends Migration
 
             $table->unique(['property_id', 'channel']);
             $table->index(['channel', 'is_active']);
+
+            $table->foreign('property_id')->references('id')->on('properties')->cascadeOnDelete();
         });
     }
 

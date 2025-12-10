@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('rate_inventory_sync', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('channel_connection_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('room_type_id')->nullable()->constrained()->nullOnDelete();
+            $table->unsignedBigInteger('channel_connection_id');
+            $table->unsignedBigInteger('room_type_id')->nullable();
             $table->date('date')->nullable();
             $table->string('channel', 50)->nullable();
             $table->string('environment', 20)->default('production');
@@ -46,6 +46,9 @@ return new class extends Migration
             $table->index(['channel_connection_id', 'sync_type', 'status'], 'rate_sync_idx');
             $table->index(['channel', 'operation', 'status']);
             $table->index(['scheduled_at', 'status']);
+
+            $table->foreign('channel_connection_id')->references('id')->on('channel_connections')->cascadeOnDelete();
+            $table->foreign('room_type_id')->references('id')->on('room_types')->nullOnDelete();
         });
     }
 

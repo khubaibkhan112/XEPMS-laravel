@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('tax_rates', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('property_id')->constrained()->cascadeOnDelete();
+            $table->unsignedBigInteger('property_id');
             $table->string('name'); // VAT, GST, Service Tax, City Tax, etc.
             $table->string('code')->nullable(); // VAT, GST, TAX1, etc.
             $table->decimal('rate', 5, 2); // Percentage rate (e.g., 20.00 for 20%)
@@ -31,6 +31,8 @@ return new class extends Migration
 
             $table->index(['property_id', 'is_active']);
             $table->index(['valid_from', 'valid_to']);
+
+            $table->foreign('property_id')->references('id')->on('properties')->cascadeOnDelete();
         });
     }
 

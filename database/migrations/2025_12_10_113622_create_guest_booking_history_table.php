@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('guest_booking_history', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('guest_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('reservation_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('property_id')->constrained()->cascadeOnDelete();
+            $table->unsignedBigInteger('guest_id');
+            $table->unsignedBigInteger('reservation_id');
+            $table->unsignedBigInteger('property_id');
             $table->date('check_in');
             $table->date('check_out');
             $table->integer('nights');
@@ -34,6 +34,10 @@ return new class extends Migration
             $table->index(['property_id', 'check_in']);
             $table->index(['status', 'payment_status']);
             $table->unique('reservation_id'); // One booking history entry per reservation
+
+            $table->foreign('guest_id')->references('id')->on('guests')->cascadeOnDelete();
+            $table->foreign('reservation_id')->references('id')->on('reservations')->cascadeOnDelete();
+            $table->foreign('property_id')->references('id')->on('properties')->cascadeOnDelete();
         });
     }
 

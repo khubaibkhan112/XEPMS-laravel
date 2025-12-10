@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('error_logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('channel_connection_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('reservation_id')->nullable()->constrained()->nullOnDelete();
+            $table->unsignedBigInteger('channel_connection_id')->nullable();
+            $table->unsignedBigInteger('reservation_id')->nullable();
             $table->string('channel', 50)->nullable();
             $table->string('environment', 20)->default('production');
             $table->string('context')->nullable();
@@ -37,6 +37,9 @@ return new class extends Migration
             $table->index(['channel_connection_id', 'is_resolved']);
             $table->index(['channel', 'severity', 'occurred_at']);
             $table->index(['request_id']);
+
+            $table->foreign('channel_connection_id')->references('id')->on('channel_connections')->nullOnDelete();
+            $table->foreign('reservation_id')->references('id')->on('reservations')->nullOnDelete();
         });
     }
 

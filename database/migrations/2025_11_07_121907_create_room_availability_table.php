@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('room_availability', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('property_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('room_type_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('room_id')->nullable()->constrained()->nullOnDelete();
+            $table->unsignedBigInteger('property_id');
+            $table->unsignedBigInteger('room_type_id')->nullable();
+            $table->unsignedBigInteger('room_id')->nullable();
             $table->date('date');
             $table->unsignedInteger('available_count')->default(0);
             $table->boolean('is_available')->default(true);
@@ -39,6 +39,10 @@ return new class extends Migration
             $table->unique(['property_id', 'room_type_id', 'room_id', 'date'], 'availability_unique');
             $table->index(['property_id', 'date']);
             $table->index(['channel_identifier', 'date']);
+
+            $table->foreign('property_id')->references('id')->on('properties')->cascadeOnDelete();
+            $table->foreign('room_type_id')->references('id')->on('room_types')->nullOnDelete();
+            $table->foreign('room_id')->references('id')->on('rooms')->nullOnDelete();
         });
     }
 

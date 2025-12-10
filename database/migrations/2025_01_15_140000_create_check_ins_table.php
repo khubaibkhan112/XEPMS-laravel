@@ -13,10 +13,14 @@ return new class extends Migration
     {
         Schema::create('check_ins', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('reservation_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('property_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('room_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('checked_in_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->unsignedBigInteger('property_id');
+            $table->unsignedBigInteger('room_id')->nullable();
+            $table->unsignedBigInteger('reservation_id');
+            $table->unsignedBigInteger('checked_in_by')->nullable();
+            // $table->foreignId('reservation_id')->constrained()->cascadeOnDelete();
+            // $table->foreignId('property_id')->constrained()->cascadeOnDelete();
+            // $table->foreignId('room_id')->nullable()->constrained()->nullOnDelete();
+            // $table->foreignId('checked_in_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('checked_in_at');
             $table->timestamp('expected_check_in_at')->nullable();
             $table->timestamp('actual_check_in_at')->nullable();

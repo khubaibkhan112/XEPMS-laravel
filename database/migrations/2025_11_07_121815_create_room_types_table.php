@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('room_types', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('property_id')->constrained()->cascadeOnDelete();
+            $table->unsignedBigInteger('property_id');
             $table->string('name');
             $table->string('code')->nullable();
             $table->unsignedTinyInteger('base_occupancy')->default(2);
@@ -26,6 +26,8 @@ return new class extends Migration
             $table->timestamps();
 
             $table->unique(['property_id', 'code']);
+
+            $table->foreign('property_id')->references('id')->on('properties')->cascadeOnDelete();
         });
     }
 

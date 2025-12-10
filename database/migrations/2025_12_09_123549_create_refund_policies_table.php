@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('refund_policies', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('property_id')->constrained()->cascadeOnDelete();
+            $table->unsignedBigInteger('property_id');
             $table->string('name');
             $table->text('description')->nullable();
             $table->string('refund_type')->default('percentage'); // percentage, fixed_amount, full
@@ -30,6 +30,8 @@ return new class extends Migration
             $table->timestamps();
 
             $table->index(['property_id', 'is_active']);
+
+            $table->foreign('property_id')->references('id')->on('properties')->cascadeOnDelete();
         });
     }
 

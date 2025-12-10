@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('audit_trails', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('property_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
+            $table->unsignedBigInteger('property_id')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->string('event');
             $table->string('entity_type');
             $table->unsignedBigInteger('entity_id')->nullable();
@@ -29,6 +29,9 @@ return new class extends Migration
 
             $table->index(['entity_type', 'entity_id']);
             $table->index(['channel', 'occurred_at']);
+
+            $table->foreign('property_id')->references('id')->on('properties')->nullOnDelete();
+            $table->foreign('user_id')->references('id')->on('users')->nullOnDelete();
         });
     }
 

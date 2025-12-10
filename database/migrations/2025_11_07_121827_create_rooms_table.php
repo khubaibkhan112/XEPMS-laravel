@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('rooms', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('property_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('room_type_id')->nullable()->constrained()->nullOnDelete();
+            $table->unsignedBigInteger('property_id');
+            $table->unsignedBigInteger('room_type_id')->nullable();
             $table->string('name');
             $table->string('room_number')->nullable();
             $table->string('status')->default('available');
@@ -25,6 +25,9 @@ return new class extends Migration
             $table->timestamps();
 
             $table->unique(['property_id', 'room_number']);
+
+            $table->foreign('property_id')->references('id')->on('properties')->cascadeOnDelete();
+            $table->foreign('room_type_id')->references('id')->on('room_types')->nullOnDelete();
         });
     }
 

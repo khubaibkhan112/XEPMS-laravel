@@ -17,9 +17,9 @@ return new class extends Migration
 
         Schema::create('check_outs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('reservation_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('property_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('room_id')->constrained()->cascadeOnDelete();
+            $table->unsignedBigInteger('reservation_id');
+            $table->unsignedBigInteger('property_id');
+            $table->unsignedBigInteger('room_id');
             $table->unsignedBigInteger('invoice_id')->nullable();
             $table->unsignedBigInteger('checked_out_by')->nullable();
             $table->timestamp('expected_check_out_at')->nullable();
@@ -42,6 +42,10 @@ return new class extends Migration
             $table->index(['property_id', 'actual_check_out_at']);
             $table->index(['reservation_id']);
             $table->index(['status', 'payment_status']);
+
+            $table->foreign('reservation_id')->references('id')->on('reservations')->cascadeOnDelete();
+            $table->foreign('property_id')->references('id')->on('properties')->cascadeOnDelete();
+            $table->foreign('room_id')->references('id')->on('rooms')->cascadeOnDelete();
         });
     }
 

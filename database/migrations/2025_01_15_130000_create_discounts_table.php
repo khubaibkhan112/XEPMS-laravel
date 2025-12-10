@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('discounts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('property_id')->constrained()->cascadeOnDelete();
+            // $table->foreignId('property_id')->constrained()->cascadeOnDelete();
+            $table->unsignedBigInteger('property_id');
             $table->string('code')->unique();
             $table->string('name');
             $table->text('description')->nullable();
@@ -22,7 +23,8 @@ return new class extends Migration
             $table->decimal('max_discount_amount', 10, 2)->nullable(); // max discount for percentage type
             $table->decimal('min_purchase_amount', 10, 2)->nullable(); // minimum order value
             $table->string('currency', 3)->default('GBP');
-            $table->foreignId('room_type_id')->nullable()->constrained()->nullOnDelete();
+            // $table->foreignId('room_type_id')->nullable()->constrained()->nullOnDelete();
+            $table->unsignedBigInteger('room_type_id')->nullable();
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
             $table->unsignedTinyInteger('min_stay')->nullable();

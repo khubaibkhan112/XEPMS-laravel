@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('booking_details', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('reservation_id')->constrained()->cascadeOnDelete();
+            $table->unsignedBigInteger('reservation_id');
             $table->date('date');
             $table->decimal('rate', 10, 2)->nullable();
             $table->decimal('original_rate', 10, 2)->nullable();
@@ -32,6 +32,8 @@ return new class extends Migration
 
             $table->unique(['reservation_id', 'date']);
             $table->index(['channel_identifier', 'date']);
+
+            $table->foreign('reservation_id')->references('id')->on('reservations')->cascadeOnDelete();
         });
     }
 

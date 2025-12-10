@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('rate_rules', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('property_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('room_type_id')->nullable()->constrained()->nullOnDelete();
+            $table->unsignedBigInteger('property_id');
+            $table->unsignedBigInteger('room_type_id')->nullable();
             $table->string('name');
             $table->string('rule_type'); // weekend, weekday, seasonal, length_of_stay, occupancy, last_minute, advance_booking
             $table->decimal('rate_adjustment', 10, 2)->nullable(); // Fixed amount adjustment
@@ -32,6 +32,9 @@ return new class extends Migration
             $table->index(['property_id', 'rule_type', 'is_active']);
             $table->index(['room_type_id', 'rule_type']);
             $table->index(['valid_from', 'valid_to']);
+
+            $table->foreign('property_id')->references('id')->on('properties')->cascadeOnDelete();
+            $table->foreign('room_type_id')->references('id')->on('room_types')->nullOnDelete();
         });
     }
 

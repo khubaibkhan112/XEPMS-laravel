@@ -12,7 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('payments', function (Blueprint $table) {
-            //
+            if (!Schema::hasColumn('payments', 'invoice_id')) {
+                $table->unsignedBigInteger('invoice_id')->nullable()->after('property_id');
+                $table->foreign('invoice_id')->references('id')->on('invoices')->nullOnDelete();
+                $table->index('invoice_id');
+            }
         });
     }
 

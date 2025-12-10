@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('invoices', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('reservation_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('property_id')->constrained()->cascadeOnDelete();
+            $table->unsignedBigInteger('reservation_id');
+            $table->unsignedBigInteger('property_id');
             $table->unsignedBigInteger('check_out_id')->nullable();
             $table->string('invoice_number')->unique();
             $table->date('invoice_date');
@@ -40,6 +40,9 @@ return new class extends Migration
             $table->index(['property_id', 'invoice_date']);
             $table->index(['status', 'due_date']);
             $table->index(['invoice_number']);
+
+            $table->foreign('reservation_id')->references('id')->on('reservations')->cascadeOnDelete();
+            $table->foreign('property_id')->references('id')->on('properties')->cascadeOnDelete();
         });
 
         // Add foreign key constraint after check_outs table is created

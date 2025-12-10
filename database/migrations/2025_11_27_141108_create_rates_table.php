@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('rates', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('property_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('room_type_id')->nullable()->constrained()->nullOnDelete();
+            $table->unsignedBigInteger('property_id');
+            $table->unsignedBigInteger('room_type_id')->nullable();
             $table->date('date');
             $table->decimal('rate', 10, 2);
             $table->decimal('base_rate', 10, 2)->nullable(); // Original rate before modifications
@@ -32,6 +32,9 @@ return new class extends Migration
             $table->index(['property_id', 'date']);
             $table->index(['room_type_id', 'date']);
             $table->index(['date', 'is_active']);
+
+            $table->foreign('property_id')->references('id')->on('properties')->cascadeOnDelete();
+            $table->foreign('room_type_id')->references('id')->on('room_types')->nullOnDelete();
         });
     }
 
