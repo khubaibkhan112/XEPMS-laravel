@@ -516,45 +516,6 @@ function handleEditReservation(reservation) {
     console.log('Calendar App: Edit modal should be visible', showEditModal.value);
 }
 
-async function handleReservationUpdate(updateData) {
-    console.log('Calendar App: handleReservationUpdate called (drag & drop)', updateData);
-    try {
-        const response = await fetch(`/api/reservations/${updateData.id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-            },
-            body: JSON.stringify({
-                room_id: updateData.roomId,
-                check_in: updateData.checkIn instanceof Date 
-                    ? updateData.checkIn.toISOString().split('T')[0]
-                    : updateData.checkIn,
-                check_out: updateData.checkOut instanceof Date 
-                    ? updateData.checkOut.toISOString().split('T')[0]
-                    : updateData.checkOut,
-            }),
-        });
-
-        const result = await response.json();
-        console.log('Calendar App: Update response', result);
-        
-        if (result.success) {
-            // Reload reservations to get updated data
-            await loadReservations();
-            window.toastr.success('Reservation moved successfully');
-        } else {
-            window.toastr.error(result.message || 'Failed to move reservation');
-            if (result.errors) {
-                console.error('Validation errors:', result.errors);
-            }
-        }
-    } catch (error) {
-        console.error('Error updating reservation:', error);
-        window.toastr.error('Failed to move reservation. Please try again.');
-    }
-}
-
 async function handleUpdateBooking(bookingData) {
     try {
         const response = await fetch(`/api/reservations/${bookingData.id}`, {

@@ -65,24 +65,24 @@ Route::prefix('public/api')->group(function () {
 
 // Protected admin routes (require authentication)
 Route::middleware('auth:web')->group(function () {
-    Route::get('/admin/dashboard', function () {
-        return view('dashboard');
-    });
+Route::get('/admin/dashboard', function () {
+    return view('dashboard');
+});
 
-    Route::get('/admin/calendar', function () {
-        return view('calendar');
-    });
+Route::get('/admin/calendar', function () {
+    return view('calendar');
+});
 
-    Route::get('/admin/rooms', function () {
-        return view('rooms');
-    });
+Route::get('/admin/rooms', function () {
+    return view('rooms');
+});
 
-    Route::get('/admin/properties', function () {
-        return view('properties');
-    });
+Route::get('/admin/properties', function () {
+    return view('properties');
+});
 
-    Route::get('/admin/room-types', function () {
-        return view('room-types');
+Route::get('/admin/room-types', function () {
+    return view('room-types');
     });
 
     Route::get('/admin/room-features', function () {
