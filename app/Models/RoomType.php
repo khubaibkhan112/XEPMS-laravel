@@ -59,4 +59,14 @@ class RoomType extends Model
     {
         return $this->hasMany(RateInventorySync::class);
     }
+
+    public function rates()
+    {
+        return $this->hasMany(Rate::class);
+    }
+
+    public function rateRules()
+    {
+        return $this->hasMany(RateRule::class);
+    }
 }

@@ -99,13 +99,29 @@
             <div class="bg-white rounded-lg shadow-md p-6">
                 <h3 class="text-xl font-semibold text-gray-900 mb-4">Pricing</h3>
                 <div class="space-y-2">
-                    <div class="flex items-center justify-between">
-                        <span class="text-gray-700">Total Amount</span>
+                    <div v-if="booking.tax_breakdown && booking.tax_breakdown.length > 0" class="space-y-1 text-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-700">Subtotal</span>
+                            <span class="text-gray-900">{{ formatCurrency((booking.total_amount || 0) - (booking.tax_amount || 0), booking.currency) }}</span>
+                        </div>
+                        <div class="ml-4 space-y-1 text-xs text-gray-500">
+                            <div v-for="tax in booking.tax_breakdown" :key="tax.tax_rate_id" class="flex justify-between">
+                                <span>{{ tax.name }} ({{ tax.rate }}%):</span>
+                                <span>{{ formatCurrency(tax.amount || 0, booking.currency) }}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between pt-2 border-t">
+                            <span class="text-gray-700">Tax</span>
+                            <span class="text-gray-900">{{ formatCurrency(booking.tax_amount || 0, booking.currency) }}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t">
+                        <span class="text-lg font-semibold text-gray-900">Total Amount</span>
                         <span class="text-2xl font-bold text-blue-600">
                             {{ formatCurrency(booking.total_amount || 0, booking.currency) }}
                         </span>
                     </div>
-                    <div class="flex items-center justify-between text-sm text-gray-500">
+                    <div class="flex items-center justify-between text-sm text-gray-500 pt-2">
                         <span>Payment Status</span>
                         <span class="capitalize">{{ booking.payment_status || 'Pending' }}</span>
                     </div>

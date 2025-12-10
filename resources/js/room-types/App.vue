@@ -193,7 +193,7 @@ async function loadRoomTypes() {
         }
     } catch (error) {
         console.error('Error loading room types:', error);
-        alert('Failed to load room types. Please try again.');
+        window.toastr.error('Failed to load room types. Please try again.');
     } finally {
         loading.value = false;
     }
@@ -220,14 +220,14 @@ async function handleDelete(roomType) {
 
         const result = await response.json();
         if (result.success) {
-            alert('Room type deleted successfully');
+            window.toastr.success('Room type deleted successfully');
             await loadRoomTypes();
         } else {
-            alert(result.message || 'Failed to delete room type');
+            window.toastr.error(result.message || 'Failed to delete room type');
         }
     } catch (error) {
         console.error('Error deleting room type:', error);
-        alert('Failed to delete room type. Please try again.');
+        window.toastr.error('Failed to delete room type. Please try again.');
     }
 }
 
@@ -253,18 +253,18 @@ async function handleSubmitRoomType(roomTypeData) {
 
         const result = await response.json();
         if (result.success) {
-            alert(selectedRoomType.value ? 'Room type updated successfully' : 'Room type created successfully');
+            window.toastr.success(selectedRoomType.value ? 'Room type updated successfully' : 'Room type created successfully');
             handleCloseModal();
             await loadRoomTypes();
         } else {
-            alert(result.message || 'Failed to save room type');
+            window.toastr.error(result.message || 'Failed to save room type');
             if (result.errors) {
                 console.error('Validation errors:', result.errors);
             }
         }
     } catch (error) {
         console.error('Error saving room type:', error);
-        alert('Failed to save room type. Please try again.');
+        window.toastr.error('Failed to save room type. Please try again.');
     }
 }
 
@@ -291,5 +291,6 @@ watch(selectedPropertyId, async (newId) => {
     }
 });
 </script>
+
 
 

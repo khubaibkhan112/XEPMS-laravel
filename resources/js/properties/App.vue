@@ -165,7 +165,7 @@ async function loadProperties() {
         }
     } catch (error) {
         console.error('Error loading properties:', error);
-        alert('Failed to load properties. Please try again.');
+        window.toastr.error('Failed to load properties. Please try again.');
     } finally {
         loading.value = false;
     }
@@ -192,14 +192,14 @@ async function handleDelete(property) {
 
         const result = await response.json();
         if (result.success) {
-            alert('Property deleted successfully');
+            window.toastr.success('Property deleted successfully');
             await loadProperties();
         } else {
-            alert(result.message || 'Failed to delete property');
+            window.toastr.error(result.message || 'Failed to delete property');
         }
     } catch (error) {
         console.error('Error deleting property:', error);
-        alert('Failed to delete property. Please try again.');
+        window.toastr.error('Failed to delete property. Please try again.');
     }
 }
 
@@ -225,18 +225,18 @@ async function handleSubmitProperty(propertyData) {
 
         const result = await response.json();
         if (result.success) {
-            alert(selectedProperty.value ? 'Property updated successfully' : 'Property created successfully');
+            window.toastr.success(selectedProperty.value ? 'Property updated successfully' : 'Property created successfully');
             handleCloseModal();
             await loadProperties();
         } else {
-            alert(result.message || 'Failed to save property');
+            window.toastr.error(result.message || 'Failed to save property');
             if (result.errors) {
                 console.error('Validation errors:', result.errors);
             }
         }
     } catch (error) {
         console.error('Error saving property:', error);
-        alert('Failed to save property. Please try again.');
+        window.toastr.error('Failed to save property. Please try again.');
     }
 }
 
@@ -244,5 +244,6 @@ onMounted(() => {
     loadProperties();
 });
 </script>
+
 
 

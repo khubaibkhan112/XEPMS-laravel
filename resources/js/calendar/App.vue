@@ -340,7 +340,7 @@ async function loadReservations() {
         }
     } catch (error) {
         console.error('Error loading reservations:', error);
-        alert('Failed to load reservations. Please try again.');
+        window.toastr.error('Failed to load reservations. Please try again.');
     } finally {
         loading.value = false;
     }
@@ -423,7 +423,15 @@ function goNext() {
 }
 
 async function handleReservationUpdate(payload) {
+    console.log('Calendar App: handleReservationUpdate called (drag & drop)', payload);
     try {
+        const checkInDate = payload.checkIn instanceof Date 
+            ? payload.checkIn 
+            : new Date(payload.checkIn);
+        const checkOutDate = payload.checkOut instanceof Date 
+            ? payload.checkOut 
+            : new Date(payload.checkOut);
+            
         const response = await fetch(`/api/reservations/${payload.id}`, {
             method: 'PUT',
             headers: {
@@ -431,22 +439,28 @@ async function handleReservationUpdate(payload) {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
             },
             body: JSON.stringify({
-                check_in: payload.checkIn.toISOString().split('T')[0],
-                check_out: payload.checkOut.toISOString().split('T')[0],
+                check_in: checkInDate.toISOString().split('T')[0],
+                check_out: checkOutDate.toISOString().split('T')[0],
                 room_id: payload.roomId,
             }),
         });
 
         const result = await response.json();
+        console.log('Calendar App: Update response', result);
+        
         if (result.success) {
             // Reload reservations to get updated data
             await loadReservations();
+            window.toastr.success('Reservation moved successfully');
         } else {
-            alert(result.message || 'Failed to update reservation');
+            window.toastr.error(result.message || 'Failed to move reservation');
+            if (result.errors) {
+                console.error('Validation errors:', result.errors);
+            }
         }
     } catch (error) {
         console.error('Error updating reservation:', error);
-        alert('Failed to update reservation. Please try again.');
+        window.toastr.error('Failed to move reservation. Please try again.');
     }
 }
 
@@ -482,21 +496,63 @@ async function handleNewBooking(bookingData) {
             // Reload reservations to show the new one
             await loadReservations();
             showCreateModal.value = false;
+            window.toastr.success('Reservation created successfully');
         } else {
-            alert(result.message || 'Failed to create reservation');
+            window.toastr.error(result.message || 'Failed to create reservation');
             if (result.errors) {
                 console.error('Validation errors:', result.errors);
             }
         }
     } catch (error) {
         console.error('Error creating reservation:', error);
-        alert('Failed to create reservation. Please try again.');
+        window.toastr.error('Failed to create reservation. Please try again.');
     }
 }
 
 function handleEditReservation(reservation) {
+    console.log('Calendar App: handleEditReservation called', reservation);
     selectedReservation.value = reservation;
     showEditModal.value = true;
+    console.log('Calendar App: Edit modal should be visible', showEditModal.value);
+}
+
+async function handleReservationUpdate(updateData) {
+    console.log('Calendar App: handleReservationUpdate called (drag & drop)', updateData);
+    try {
+        const response = await fetch(`/api/reservations/${updateData.id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            },
+            body: JSON.stringify({
+                room_id: updateData.roomId,
+                check_in: updateData.checkIn instanceof Date 
+                    ? updateData.checkIn.toISOString().split('T')[0]
+                    : updateData.checkIn,
+                check_out: updateData.checkOut instanceof Date 
+                    ? updateData.checkOut.toISOString().split('T')[0]
+                    : updateData.checkOut,
+            }),
+        });
+
+        const result = await response.json();
+        console.log('Calendar App: Update response', result);
+        
+        if (result.success) {
+            // Reload reservations to get updated data
+            await loadReservations();
+            window.toastr.success('Reservation moved successfully');
+        } else {
+            window.toastr.error(result.message || 'Failed to move reservation');
+            if (result.errors) {
+                console.error('Validation errors:', result.errors);
+            }
+        }
+    } catch (error) {
+        console.error('Error updating reservation:', error);
+        window.toastr.error('Failed to move reservation. Please try again.');
+    }
 }
 
 async function handleUpdateBooking(bookingData) {
@@ -530,15 +586,16 @@ async function handleUpdateBooking(bookingData) {
             // Reload reservations to get updated data
             await loadReservations();
             showEditModal.value = false;
+            window.toastr.success('Reservation updated successfully');
         } else {
-            alert(result.message || 'Failed to update reservation');
+            window.toastr.error(result.message || 'Failed to update reservation');
             if (result.errors) {
                 console.error('Validation errors:', result.errors);
             }
         }
     } catch (error) {
         console.error('Error updating reservation:', error);
-        alert('Failed to update reservation. Please try again.');
+        window.toastr.error('Failed to update reservation. Please try again.');
     }
 }
 
@@ -562,12 +619,13 @@ async function handleCancelBooking(cancellationData) {
             // Reload reservations to reflect cancellation
             await loadReservations();
             showCancelModal.value = false;
+            window.toastr.success('Reservation cancelled successfully');
         } else {
-            alert(result.message || 'Failed to cancel reservation');
+            window.toastr.error(result.message || 'Failed to cancel reservation');
         }
     } catch (error) {
         console.error('Error cancelling reservation:', error);
-        alert('Failed to cancel reservation. Please try again.');
+        window.toastr.error('Failed to cancel reservation. Please try again.');
     }
 }
 

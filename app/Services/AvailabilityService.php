@@ -124,12 +124,15 @@ class AvailabilityService
             ];
         }
 
+        $availableCount = collect($availableRooms)->where('is_available', true)->count();
+
         return [
             'check_in' => $checkIn->format('Y-m-d'),
             'check_out' => $checkOut->format('Y-m-d'),
             'nights' => $nights,
             'total_rooms_checked' => $rooms->count(),
-            'available_rooms' => collect($availableRooms)->where('is_available', true)->count(),
+            'available_rooms' => $availableCount,
+            'available' => $availableCount > 0, // Add boolean for easier checking
             'rooms' => $availableRooms,
         ];
     }

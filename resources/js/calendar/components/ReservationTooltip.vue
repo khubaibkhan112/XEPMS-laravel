@@ -2,7 +2,7 @@
     <div
         v-if="show"
         ref="tooltipRef"
-        class="fixed z-50 rounded-lg bg-slate-900 px-4 py-3 text-xs text-white shadow-xl"
+        class="fixed z-[9998] rounded-lg bg-slate-900 px-4 py-3 text-xs text-white shadow-xl pointer-events-auto"
         :style="tooltipStyle"
     >
         <div class="space-y-2">
@@ -89,7 +89,14 @@
                 <div v-if="reservation.notes" class="border-t border-slate-700 pt-2 text-slate-400">
                     <p class="line-clamp-2">{{ reservation.notes }}</p>
                 </div>
-                <div v-if="reservation.status !== 'cancelled'" class="border-t border-slate-700 pt-2">
+                <div v-if="reservation.status !== 'cancelled'" class="border-t border-slate-700 pt-2 space-y-2">
+                    <button
+                        class="w-full rounded bg-blue-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-blue-700"
+                        type="button"
+                        @click="handleEdit"
+                    >
+                        Edit Reservation
+                    </button>
                     <button
                         class="w-full rounded bg-red-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-red-700"
                         type="button"
@@ -105,7 +112,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { format } from 'date-fns';
 import { STATUS_CONFIG } from '../constants/statuses';
 
@@ -124,9 +131,13 @@ const props = defineProps({
     },
 });
 
-const emit = defineEmits(['cancel']);
+const emit = defineEmits(['cancel', 'edit']);
 
 const tooltipRef = ref(null);
+
+watch(() => props.show, (newValue) => {
+    console.log('ReservationTooltip: show prop changed to', newValue, 'for reservation', props.reservation?.id);
+}, { immediate: true });
 
 const tooltipStyle = computed(() => {
     return {
@@ -163,7 +174,13 @@ function formatCurrency(amount) {
     }).format(amount);
 }
 
+function handleEdit() {
+    console.log('ReservationTooltip: Edit button clicked', props.reservation.id);
+    emit('edit', props.reservation);
+}
+
 function handleCancel() {
+    console.log('ReservationTooltip: Cancel button clicked', props.reservation.id);
     emit('cancel', props.reservation);
 }
 </script>

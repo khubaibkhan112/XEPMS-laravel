@@ -53,20 +53,50 @@
                     New
                 </span>
             </a>
-            <a
-                class="mt-1 flex w-full items-center justify-between rounded-lg px-4 py-2 text-left transition hover:bg-slate-50"
-                :class="isActive('/admin/room-types') ? 'bg-blue-50 text-blue-700' : ''"
-                href="/admin/room-types"
-            >
-                <span>Room Types</span>
-            </a>
-            <a
-                class="mt-1 flex w-full items-center justify-between rounded-lg px-4 py-2 text-left transition hover:bg-slate-50"
-                :class="isActive('/admin/rooms') ? 'bg-blue-50 text-blue-700' : ''"
-                href="/admin/rooms"
-            >
-                <span>Room Management</span>
-            </a>
+            
+            <!-- Catalog / Room Management with submenu -->
+            <div class="mt-1">
+                <button
+                    @click="toggleCatalogMenu"
+                    class="flex w-full items-center justify-between rounded-lg px-4 py-2 text-left transition hover:bg-slate-50"
+                    :class="isCatalogActive() ? 'bg-blue-50 text-blue-700' : ''"
+                    type="button"
+                >
+                    <span>Catalog</span>
+                    <svg 
+                        class="h-4 w-4 transition-transform"
+                        :class="catalogMenuOpen ? 'rotate-90' : ''"
+                        fill="none" 
+                        stroke="currentColor" 
+                        viewBox="0 0 24 24"
+                    >
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
+                <div v-show="catalogMenuOpen" class="ml-4 mt-1 space-y-1 border-l-2 border-slate-200 pl-2">
+                    <a
+                        class="flex w-full items-center rounded-lg px-4 py-2 text-left transition hover:bg-slate-50"
+                        :class="isActive('/admin/room-types') ? 'bg-blue-50 text-blue-700' : ''"
+                        href="/admin/room-types"
+                    >
+                        <span>Manage Room Types</span>
+                    </a>
+                    <a
+                        class="flex w-full items-center rounded-lg px-4 py-2 text-left transition hover:bg-slate-50"
+                        :class="isActive('/admin/rooms') ? 'bg-blue-50 text-blue-700' : ''"
+                        href="/admin/rooms"
+                    >
+                        <span>Manage Rooms</span>
+                    </a>
+                    <a
+                        class="flex w-full items-center rounded-lg px-4 py-2 text-left transition hover:bg-slate-50"
+                        :class="isActive('/admin/room-features') ? 'bg-blue-50 text-blue-700' : ''"
+                        href="/admin/room-features"
+                    >
+                        <span>Features</span>
+                    </a>
+                </div>
+            </div>
 
             <div class="px-2 pt-6 text-xs uppercase tracking-wide text-slate-400">Reports</div>
             <button
@@ -125,10 +155,26 @@ import PropertySelectorModal from './PropertySelectorModal.vue';
 const { selectedProperty, loadPropertyDetails } = usePropertySelection();
 const currentProperty = ref(null);
 const showPropertyModal = ref(false);
+const catalogMenuOpen = ref(false);
 
 function isActive(path) {
     return window.location.pathname === path;
 }
+
+function isCatalogActive() {
+    return isActive('/admin/room-types') || isActive('/admin/rooms') || isActive('/admin/room-features');
+}
+
+function toggleCatalogMenu() {
+    catalogMenuOpen.value = !catalogMenuOpen.value;
+}
+
+// Auto-open catalog menu if on a catalog page
+onMounted(() => {
+    if (isCatalogActive()) {
+        catalogMenuOpen.value = true;
+    }
+});
 
 function handlePropertySelected(property) {
     currentProperty.value = property;
@@ -149,5 +195,10 @@ watch(selectedProperty, (newProperty) => {
 onMounted(async () => {
     await loadPropertyDetails();
     currentProperty.value = selectedProperty.value;
+    
+    // Auto-open catalog menu if on a catalog page
+    if (isCatalogActive()) {
+        catalogMenuOpen.value = true;
+    }
 });
 </script>

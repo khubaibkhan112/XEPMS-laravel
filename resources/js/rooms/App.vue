@@ -200,7 +200,7 @@ async function loadRooms() {
         }
     } catch (error) {
         console.error('Error loading rooms:', error);
-        alert('Failed to load rooms. Please try again.');
+        window.toastr.error('Failed to load rooms. Please try again.');
     } finally {
         loading.value = false;
     }
@@ -227,14 +227,14 @@ async function handleDelete(room) {
 
         const result = await response.json();
         if (result.success) {
-            alert('Room deleted successfully');
+            window.toastr.success('Room deleted successfully');
             await loadRooms();
         } else {
-            alert(result.message || 'Failed to delete room');
+            window.toastr.error(result.message || 'Failed to delete room');
         }
     } catch (error) {
         console.error('Error deleting room:', error);
-        alert('Failed to delete room. Please try again.');
+        window.toastr.error('Failed to delete room. Please try again.');
     }
 }
 
@@ -260,15 +260,15 @@ async function handleSubmitRoom(roomData) {
 
         const result = await response.json();
         if (result.success) {
-            alert(selectedRoom.value ? 'Room updated successfully' : 'Room created successfully');
+            window.toastr.success(selectedRoom.value ? 'Room updated successfully' : 'Room created successfully');
             handleCloseModal();
             await loadRooms();
         } else {
-            alert(result.message || 'Failed to save room');
+            window.toastr.error(result.message || 'Failed to save room');
         }
     } catch (error) {
         console.error('Error saving room:', error);
-        alert('Failed to save room. Please try again.');
+        window.toastr.error('Failed to save room. Please try again.');
     }
 }
 

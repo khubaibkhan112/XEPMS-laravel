@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Property;
 use App\Models\Reservation;
 use App\Services\AvailabilityService;
+use App\Services\PricingService;
+use App\Services\TaxService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -14,7 +16,9 @@ use Illuminate\Support\Facades\Validator;
 class BookingController extends Controller
 {
     public function __construct(
-        protected AvailabilityService $availabilityService
+        protected AvailabilityService $availabilityService,
+        protected PricingService $pricingService,
+        protected TaxService $taxService
     ) {
     }
 
@@ -79,8 +83,7 @@ class BookingController extends Controller
                 ], 422);
             }
 
-            // Calculate total amount (simplified - you may want to add pricing logic)
-            $nights = $checkIn->diffInDays($checkOut);
+            // Calculate total amount using pricing engine
             $roomType = $property->roomTypes()->where('is_active', true)->find($request->room_type_id);
             
             if (!$roomType) {
@@ -89,14 +92,61 @@ class BookingController extends Controller
                     'message' => 'Selected room type not found or not available',
                 ], 404);
             }
-            
-            $baseRate = $roomType->base_rate ?? 100; // Default rate if not set
-            $totalAmount = $baseRate * $nights;
+
+            $pricing = $this->pricingService->calculateTotalPrice(
+                propertyId: $property->id,
+                roomTypeId: $request->room_type_id,
+                checkIn: $checkIn,
+                checkOut: $checkOut,
+                adultCount: $request->adult_count,
+                childCount: $request->child_count ?? 0,
+                rateType: 'default'
+            );
+
+            $totalAmount = $pricing['total_amount'];
+            $taxAmount = $pricing['total_tax'] ?? 0;
+            $subtotal = $pricing['subtotal'] ?? $totalAmount;
+
+            // Get available room for this room type (if any)
+            $roomId = null;
+            if (isset($availability['available_rooms']) && count($availability['available_rooms']) > 0) {
+                $roomId = $availability['available_rooms'][0]['id'];
+            }
+
+            // Find or create guest
+            $guest = null;
+            if ($request->guest_email || $request->guest_phone) {
+                if ($request->guest_email) {
+                    $guest = \App\Models\Guest::byEmail($request->guest_email)->first();
+                }
+                if (!$guest && $request->guest_phone) {
+                    $guest = \App\Models\Guest::byPhone($request->guest_phone)->first();
+                }
+                if (!$guest) {
+                    $guest = \App\Models\Guest::create([
+                        'first_name' => $request->guest_first_name,
+                        'last_name' => $request->guest_last_name,
+                        'email' => $request->guest_email,
+                        'phone' => $request->guest_phone,
+                    ]);
+                } else {
+                    // Update guest information if provided
+                    $guest->update([
+                        'first_name' => $request->guest_first_name,
+                        'last_name' => $request->guest_last_name,
+                        'email' => $request->guest_email ?: $guest->email,
+                        'phone' => $request->guest_phone ?: $guest->phone,
+                    ]);
+                }
+            }
 
             // Create reservation
             $reservation = Reservation::create([
+                'guest_id' => $guest?->id,
                 'property_id' => $request->property_id,
                 'room_type_id' => $request->room_type_id,
+                'room_id' => $roomId ?? 0, // 0 or null if no specific room assigned yet
+                'channel_connection_id' => 0, // 0 for direct bookings
                 'guest_first_name' => $request->guest_first_name,
                 'guest_last_name' => $request->guest_last_name,
                 'guest_email' => $request->guest_email,
@@ -106,12 +156,38 @@ class BookingController extends Controller
                 'adult_count' => $request->adult_count,
                 'child_count' => $request->child_count ?? 0,
                 'total_amount' => $totalAmount,
+                'tax_amount' => $taxAmount,
                 'currency' => $property->currency ?? 'GBP',
                 'status' => 'pending', // Pending confirmation
                 'source' => 'direct', // Direct booking from website
                 'payment_status' => 'pending',
                 'notes' => $request->notes,
+                'tax_breakdown' => $pricing['tax_breakdown'] ?? [],
+                'pricing_breakdown' => $pricing['pricing_breakdown'] ?? null,
             ]);
+
+            // Create booking history entry
+            if ($guest) {
+                \App\Models\GuestBookingHistory::create([
+                    'guest_id' => $guest->id,
+                    'reservation_id' => $reservation->id,
+                    'property_id' => $property->id,
+                    'check_in' => $checkIn,
+                    'check_out' => $checkOut,
+                    'nights' => $reservation->nights,
+                    'total_amount' => $totalAmount,
+                    'paid_amount' => 0,
+                    'currency' => $property->currency ?? 'GBP',
+                    'status' => 'pending',
+                    'payment_status' => 'pending',
+                ]);
+
+                // Update guest's last stay
+                $guest->update(['last_stay_at' => now()]);
+                
+                // Update loyalty status
+                $guest->updateLoyaltyStatus();
+            }
 
             $reservation->load(['property', 'roomType']);
             

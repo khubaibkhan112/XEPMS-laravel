@@ -27,6 +27,7 @@ class Reservation extends Model
     protected $touches = ['room', 'property'];
 
     protected $fillable = [
+        'guest_id',
         'property_id',
         'room_type_id',
         'room_id',
@@ -133,6 +134,11 @@ class Reservation extends Model
         return $this->belongsTo(Property::class);
     }
 
+    public function guest()
+    {
+        return $this->belongsTo(Guest::class);
+    }
+
     public function roomType()
     {
         return $this->belongsTo(RoomType::class);
@@ -153,6 +159,21 @@ class Reservation extends Model
         return $this->hasMany(BookingDetail::class);
     }
 
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    public function checkOut()
+    {
+        return $this->hasOne(CheckOut::class);
+    }
+
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class);
+    }
+
     public function syncLogs()
     {
         return $this->hasMany(SyncLog::class);
@@ -161,6 +182,16 @@ class Reservation extends Model
     public function errorLogs()
     {
         return $this->hasMany(ErrorLog::class);
+    }
+
+    public function checkIn()
+    {
+        return $this->hasOne(CheckIn::class);
+    }
+
+    public function keys()
+    {
+        return $this->hasMany(RoomKey::class);
     }
 
     public function getGuestNameAttribute(): string

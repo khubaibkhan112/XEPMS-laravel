@@ -51,4 +51,14 @@ class Room extends Model
     {
         return $this->hasMany(OtaMapping::class);
     }
+
+    public function checkIns()
+    {
+        return $this->hasMany(CheckIn::class);
+    }
+
+    public function keys()
+    {
+        return $this->hasMany(RoomKey::class);
+    }
 }

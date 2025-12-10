@@ -3,7 +3,6 @@
         <div
             v-if="show"
             class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-4 overflow-y-auto"
-            @click.self="handleClose"
         >
             <div class="w-full max-w-2xl rounded-lg bg-white shadow-xl my-8 max-h-[90vh] overflow-y-auto">
                 <div class="border-b border-slate-200 px-6 py-4">
@@ -246,5 +245,6 @@ function handleSubmit() {
     emit('submit', submitData);
 }
 </script>
+
 
 

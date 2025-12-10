@@ -67,8 +67,48 @@ class Property extends Model
         return $this->hasMany(AuditTrail::class);
     }
 
+    public function checkIns()
+    {
+        return $this->hasMany(CheckIn::class);
+    }
+
+    public function keys()
+    {
+        return $this->hasMany(RoomKey::class);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function rates()
+    {
+        return $this->hasMany(Rate::class);
+    }
+
+    public function rateRules()
+    {
+        return $this->hasMany(RateRule::class);
+    }
+
+    public function taxRates()
+    {
+        return $this->hasMany(TaxRate::class);
+    }
+
+    public function refundPolicies()
+    {
+        return $this->hasMany(RefundPolicy::class);
+    }
+
+    public function checkOuts()
+    {
+        return $this->hasMany(CheckOut::class);
+    }
+
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class);
     }
 }

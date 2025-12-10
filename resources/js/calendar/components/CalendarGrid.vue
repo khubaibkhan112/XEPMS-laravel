@@ -14,15 +14,17 @@
                     ></div>
                 </div>
 
-                <div class="absolute inset-0">
+                <div class="absolute inset-0 z-10">
                     <div
                         v-for="room in rooms"
                         :key="room.id"
                         :data-room-id="room.id"
                         class="relative border-b border-slate-100"
+                        style="min-height: 64px;"
                         @drop="handleDrop($event, room.id)"
                         @dragover.prevent
-                        @dragenter.prevent
+                        @dragenter.prevent="handleDragEnter"
+                        @dragleave.prevent="handleDragLeave"
                     >
                         <ReservationBlock
                             v-for="reservation in reservationsByRoom.get(room.id) ?? []"
@@ -38,7 +40,7 @@
                     </div>
                 </div>
 
-                <div class="relative">
+                <div class="relative z-0 pointer-events-none">
                     <div
                         v-for="room in rooms"
                         :key="room.id"
@@ -117,11 +119,12 @@ const reservationsByRoom = computed(() => {
             rawOffset,
         };
 
-        if (!lookup.has(reservation.roomId)) {
-            lookup.set(reservation.roomId, []);
+        const roomId = reservation.roomId || reservation.room_id;
+        if (!lookup.has(roomId)) {
+            lookup.set(roomId, []);
         }
 
-        lookup.get(reservation.roomId).push(block);
+        lookup.get(roomId).push(block);
     });
 
     lookup.forEach((blocks) => {
@@ -145,21 +148,79 @@ function handleReservationUpdate(payload) {
 }
 
 function handleDragStart(reservation) {
+    console.log('CalendarGrid: Drag start - reservation:', reservation.id);
     draggedReservation = reservation;
 }
 
+function handleDragEnter(event) {
+    event.preventDefault();
+    console.log('CalendarGrid: Drag enter on room row');
+}
+
+function handleDragLeave(event) {
+    event.preventDefault();
+    console.log('CalendarGrid: Drag leave from room row');
+}
+
 function handleDrop(event, targetRoomId) {
-    if (!draggedReservation) return;
+    event.preventDefault();
+    console.log('CalendarGrid: Drop event', { targetRoomId, draggedReservation: draggedReservation?.id });
+    
+    if (!draggedReservation) {
+        // Try to get reservation from drag data
+        const reservationId = event.dataTransfer.getData('text/plain');
+        console.log('CalendarGrid: No draggedReservation, trying to get from dataTransfer:', reservationId);
+        
+        if (reservationId) {
+            // Find reservation by ID
+            const found = props.reservations.find(r => r.id.toString() === reservationId);
+            if (found) {
+                console.log('CalendarGrid: Found reservation from ID:', found.id);
+                draggedReservation = found;
+            } else {
+                console.log('CalendarGrid: Reservation not found with ID:', reservationId);
+                return;
+            }
+        } else {
+            console.log('CalendarGrid: No reservation ID in dataTransfer');
+            return;
+        }
+    }
 
     const rect = event.currentTarget.getBoundingClientRect();
     const x = event.clientX - rect.left;
     const offset = Math.max(0, Math.floor(x / props.dayWidth));
 
+    console.log('CalendarGrid: Drop calculation', {
+        x,
+        dayWidth: props.dayWidth,
+        calculatedOffset: offset,
+        startDate: props.startDate
+    });
+
     const currentOffset = draggedReservation.offset || 0;
-    if (draggedReservation.roomId !== targetRoomId || currentOffset !== offset) {
+    const reservationRoomId = draggedReservation.roomId || draggedReservation.room_id;
+    
+    console.log('CalendarGrid: Comparing', {
+        reservationRoomId,
+        targetRoomId,
+        currentOffset,
+        newOffset: offset,
+        shouldUpdate: reservationRoomId !== targetRoomId || currentOffset !== offset
+    });
+    
+    if (reservationRoomId !== targetRoomId || currentOffset !== offset) {
         const newCheckIn = addDays(props.startDate, offset);
-        const duration = draggedReservation.duration || 1;
+        const duration = draggedReservation.duration || daysBetween(draggedReservation.checkIn, draggedReservation.checkOut);
         const newCheckOut = addDays(newCheckIn, duration);
+
+        console.log('CalendarGrid: Emitting update-reservation', {
+            id: draggedReservation.id,
+            roomId: targetRoomId,
+            checkIn: newCheckIn,
+            checkOut: newCheckOut,
+            duration
+        });
 
         emit('update-reservation', {
             id: draggedReservation.id,
@@ -167,12 +228,15 @@ function handleDrop(event, targetRoomId) {
             checkIn: newCheckIn,
             checkOut: newCheckOut,
         });
+    } else {
+        console.log('CalendarGrid: No change needed - same room and offset');
     }
 
     draggedReservation = null;
 }
 
 function handleEditReservation(reservation) {
+    console.log('CalendarGrid: handleEditReservation called', reservation);
     emit('edit-reservation', reservation);
 }
 
