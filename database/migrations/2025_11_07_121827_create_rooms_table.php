@@ -26,8 +26,8 @@ return new class extends Migration
 
             $table->unique(['property_id', 'room_number']);
 
-            $table->foreign('property_id')->references('id')->on('properties')->cascadeOnDelete();
-            $table->foreign('room_type_id')->references('id')->on('room_types')->nullOnDelete();
+            // $table->foreign('property_id')->references('id')->on('properties')->cascadeOnDelete();
+            // $table->foreign('room_type_id')->references('id')->on('room_types')->nullOnDelete();
         });
     }
 

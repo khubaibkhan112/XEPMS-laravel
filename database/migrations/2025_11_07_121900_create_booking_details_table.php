@@ -33,7 +33,7 @@ return new class extends Migration
             $table->unique(['reservation_id', 'date']);
             $table->index(['channel_identifier', 'date']);
 
-            $table->foreign('reservation_id')->references('id')->on('reservations')->cascadeOnDelete();
+            // $table->foreign('reservation_id')->references('id')->on('reservations')->cascadeOnDelete();
         });
     }
 

@@ -34,12 +34,12 @@ return new class extends Migration
             $table->index(['check_in_id']);
             $table->index(['status']);
 
-            $table->foreign('property_id')->references('id')->on('properties')->cascadeOnDelete();
-            $table->foreign('room_id')->references('id')->on('rooms')->nullOnDelete();
-            $table->foreign('reservation_id')->references('id')->on('reservations')->nullOnDelete();
-            $table->foreign('check_in_id')->references('id')->on('check_ins')->nullOnDelete();
-            $table->foreign('issued_by')->references('id')->on('users')->nullOnDelete();
-            $table->foreign('returned_to')->references('id')->on('users')->nullOnDelete();
+            // $table->foreign('property_id')->references('id')->on('properties')->cascadeOnDelete();
+            // $table->foreign('room_id')->references('id')->on('rooms')->nullOnDelete();
+            // $table->foreign('reservation_id')->references('id')->on('reservations')->nullOnDelete();
+            // $table->foreign('check_in_id')->references('id')->on('check_ins')->nullOnDelete();
+            // $table->foreign('issued_by')->references('id')->on('users')->nullOnDelete();
+            // $table->foreign('returned_to')->references('id')->on('users')->nullOnDelete();
         });
     }
 
