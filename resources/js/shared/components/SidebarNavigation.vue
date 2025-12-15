@@ -53,6 +53,13 @@
                     New
                 </span>
             </a>
+            <a
+                class="mt-1 flex w-full items-center justify-between rounded-lg px-4 py-2 text-left transition hover:bg-slate-50"
+                :class="isActive('/admin/staff') ? 'bg-blue-50 text-blue-700' : ''"
+                href="/admin/staff"
+            >
+                <span>Staff Management</span>
+            </a>
             
             <!-- Catalog / Room Management with submenu -->
             <div class="mt-1">
@@ -99,18 +106,13 @@
             </div>
 
             <div class="px-2 pt-6 text-xs uppercase tracking-wide text-slate-400">Reports</div>
-            <button
+            <a
                 class="mt-1 flex w-full items-center justify-between rounded-lg px-4 py-2 text-left transition hover:bg-slate-50"
-                type="button"
+                :class="isActive('/admin/reports') ? 'bg-blue-50 text-blue-700' : ''"
+                href="/admin/reports"
             >
-                <span>Occupancy</span>
-            </button>
-            <button
-                class="mt-1 flex w-full items-center justify-between rounded-lg px-4 py-2 text-left transition hover:bg-slate-50"
-                type="button"
-            >
-                <span>Revenue</span>
-            </button>
+                <span>Reports & Analytics</span>
+            </a>
         </nav>
         <div class="border-t border-slate-200 px-4 py-4 text-sm">
             <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-3">

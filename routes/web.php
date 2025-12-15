@@ -13,6 +13,8 @@ use App\Http\Controllers\Api\ReservationController;
 use App\Http\Controllers\Api\RoomController;
 use App\Http\Controllers\Api\RoomFeatureController;
 use App\Http\Controllers\Api\RoomTypeController;
+use App\Http\Controllers\Api\StaffController;
+use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Public\BookingController as PublicBookingController;
 use App\Http\Controllers\Public\PricingController as PublicPricingController;
@@ -87,6 +89,14 @@ Route::get('/admin/room-types', function () {
 
     Route::get('/admin/room-features', function () {
         return view('room-features');
+    });
+
+    Route::get('/admin/staff', function () {
+        return view('staff');
+    });
+
+    Route::get('/admin/reports', function () {
+        return view('reports');
     });
 });
 
@@ -207,4 +217,24 @@ Route::prefix('api')->middleware('auth:web')->group(function () {
     // Channel Import endpoints
     Route::post('/channel-import/import', [ChannelImportController::class, 'import']);
     Route::post('/channel-import/import-by-channel', [ChannelImportController::class, 'importByChannel']);
+
+    // Staff Management endpoints
+    Route::get('/staff', [StaffController::class, 'index']);
+    Route::post('/staff', [StaffController::class, 'store']);
+    Route::get('/staff/roles', [StaffController::class, 'roles']);
+    Route::get('/staff/permissions', [StaffController::class, 'permissions']);
+    Route::get('/staff/{id}', [StaffController::class, 'show']);
+    Route::put('/staff/{id}', [StaffController::class, 'update']);
+    Route::patch('/staff/{id}', [StaffController::class, 'update']);
+    Route::delete('/staff/{id}', [StaffController::class, 'destroy']);
+    Route::get('/staff/{id}/roles-permissions', [StaffController::class, 'getRolesAndPermissions']);
+    Route::post('/staff/{id}/assign-role', [StaffController::class, 'assignRole']);
+    Route::post('/staff/{id}/remove-role', [StaffController::class, 'removeRole']);
+
+    // Reports endpoints
+    Route::get('/reports/dashboard', [ReportController::class, 'dashboard']);
+    Route::get('/reports/reservations', [ReportController::class, 'reservations']);
+    Route::get('/reports/revenue', [ReportController::class, 'revenue']);
+    Route::get('/reports/occupancy', [ReportController::class, 'occupancy']);
+    Route::get('/reports/guests', [ReportController::class, 'guests']);
 });

@@ -33,6 +33,8 @@ import RoomsApp from './rooms/App.vue';
 import PropertiesApp from './properties/App.vue';
 import RoomTypesApp from './room-types/App.vue';
 import RoomFeaturesApp from './room-features/App.vue';
+import StaffApp from './staff/App.vue';
+import ReportsApp from './reports/App.vue';
 import PropertySearchApp from './customer/PropertySearch.vue';
 import PropertyDetailApp from './customer/PropertyDetail.vue';
 import BookingConfirmationApp from './customer/BookingConfirmation.vue';
@@ -44,6 +46,8 @@ const roomsElement = document.getElementById('rooms-app');
 const propertiesElement = document.getElementById('properties-app');
 const roomTypesElement = document.getElementById('room-types-app');
 const roomFeaturesElement = document.getElementById('room-features-app');
+const staffElement = document.getElementById('staff-app');
+const reportsElement = document.getElementById('reports-app');
 const propertySearchElement = document.getElementById('property-search-app');
 const propertyDetailElement = document.getElementById('property-detail-app');
 const bookingConfirmationElement = document.getElementById('booking-confirmation-app');
@@ -74,6 +78,14 @@ if (roomTypesElement) {
 
 if (roomFeaturesElement) {
     createApp(RoomFeaturesApp).mount(roomFeaturesElement);
+}
+
+if (staffElement) {
+    createApp(StaffApp).mount(staffElement);
+}
+
+if (reportsElement) {
+    createApp(ReportsApp).mount(reportsElement);
 }
 
 if (propertySearchElement) {
