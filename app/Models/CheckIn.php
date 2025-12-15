@@ -137,5 +137,3 @@ class CheckIn extends Model
 
 
 
-
-

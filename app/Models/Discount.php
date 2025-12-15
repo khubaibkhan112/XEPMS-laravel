@@ -243,5 +243,3 @@ class Discount extends Model
 
 
 
-
-
