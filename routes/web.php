@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\ReservationController;
 use App\Http\Controllers\Api\RoomController;
 use App\Http\Controllers\Api\RoomFeatureController;
 use App\Http\Controllers\Api\RoomTypeController;
+use App\Http\Controllers\Api\StaffController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Public\BookingController as PublicBookingController;
 use App\Http\Controllers\Public\PricingController as PublicPricingController;
@@ -207,4 +208,14 @@ Route::prefix('api')->middleware('auth:web')->group(function () {
     // Channel Import endpoints
     Route::post('/channel-import/import', [ChannelImportController::class, 'import']);
     Route::post('/channel-import/import-by-channel', [ChannelImportController::class, 'importByChannel']);
+
+    // Staff Management endpoints
+    Route::get('/staff', [StaffController::class, 'index']);
+    Route::post('/staff', [StaffController::class, 'store']);
+    Route::get('/staff/roles', [StaffController::class, 'roles']);
+    Route::get('/staff/permissions', [StaffController::class, 'permissions']);
+    Route::get('/staff/{id}', [StaffController::class, 'show']);
+    Route::put('/staff/{id}', [StaffController::class, 'update']);
+    Route::patch('/staff/{id}', [StaffController::class, 'update']);
+    Route::delete('/staff/{id}', [StaffController::class, 'destroy']);
 });
